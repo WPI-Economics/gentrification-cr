@@ -85,7 +85,7 @@ This boxplot shows the real income medians for London MSOAs, in 2020 prices.
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "MSOA incomes summary (2012 - 2020)"
@@ -95,7 +95,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select(MSOA21HCLNM, `2012`, `2014`, `2016`, `2018`, `2020`) %>% 
   pivot_longer(cols = c(`2012`, `2014`, `2016`, `2018`, `2020`),
                names_to = "Year",
@@ -158,7 +158,7 @@ The income distributions are broadly similar across years. Starting with 2012, @
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Distribution of MSOA incomes between 2012 and 2020"
@@ -168,7 +168,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select(MSOA21HCLNM, `2012`, `2014`, `2016`, `2018`, `2020`)
 
 
@@ -240,7 +240,7 @@ then 2014, @cr-income-density-plots-2014
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Distribution of MSOA incomes between 2012 and 2020"
@@ -250,7 +250,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select(MSOA21HCLNM, `2012`, `2014`, `2016`, `2018`, `2020`)
 
 
@@ -321,7 +321,7 @@ plot
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Distribution of MSOA incomes between 2012 and 2020"
@@ -331,7 +331,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select(MSOA21HCLNM, `2012`, `2014`, `2016`, `2018`, `2020`)
 
 
@@ -402,7 +402,7 @@ plot
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Distribution of MSOA incomes between 2012 and 2020"
@@ -412,7 +412,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select(MSOA21HCLNM, `2012`, `2014`, `2016`, `2018`, `2020`)
 
 
@@ -483,7 +483,7 @@ and 2020. @cr-income-density-plots-2020
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Distribution of MSOA incomes between 2012 and 2020"
@@ -493,7 +493,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select(MSOA21HCLNM, `2012`, `2014`, `2016`, `2018`, `2020`)
 
 
@@ -570,7 +570,7 @@ This means that, although the median incomes are not very different between the 
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Distribution of MSOA incomes between 2012 and 2020"
@@ -580,7 +580,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select(MSOA21HCLNM, `2012`, `2014`, `2016`, `2018`, `2020`)
 
 
@@ -658,7 +658,7 @@ and the highest just under £50k. @cr-income-byQuin-medians-2012-withHighlightHi
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Median 2012 MSOA incomes"
@@ -669,7 +669,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select(MSOA21HCLNM, `2012`, `2020`, income_quintiles_2012 ) %>% 
   group_by(income_quintiles_2012) %>% 
   summarise("Median income 2012" = median(`2012`),
@@ -728,7 +728,7 @@ plot
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Median 2012 MSOA incomes"
@@ -739,7 +739,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select(MSOA21HCLNM, `2012`, `2020`, income_quintiles_2012 ) %>% 
   group_by(income_quintiles_2012) %>% 
   summarise("Median income 2012" = median(`2012`),
@@ -798,7 +798,7 @@ plot
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Median 2012 MSOA incomes"
@@ -809,7 +809,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select(MSOA21HCLNM, `2012`, `2020`, income_quintiles_2012 ) %>% 
   group_by(income_quintiles_2012) %>% 
   summarise("Median income 2012" = median(`2012`),
@@ -874,7 +874,7 @@ The highest income MSOAs in 2012 actually saw a drop in their median incomes in 
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Median MSOA incomes, by area income quintile in 2012"
@@ -884,7 +884,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select(MSOA21HCLNM, `2012`, `2020`, income_quintiles_2012 ) %>% 
   group_by(income_quintiles_2012) %>% 
   summarise("Median income 2012" = median(`2012`),
@@ -942,7 +942,7 @@ plot
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Median MSOA incomes, by area income quintile in 2012"
@@ -952,7 +952,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select(MSOA21HCLNM, `2012`, `2020`, income_quintiles_2012 ) %>% 
   group_by(income_quintiles_2012) %>% 
   summarise("Median income 2012" = median(`2012`),
@@ -1008,7 +1008,7 @@ plot
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Median MSOA incomes, by area income quintile in 2012"
@@ -1018,7 +1018,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select(MSOA21HCLNM, `2012`, `2020`, income_quintiles_2012 ) %>% 
   group_by(income_quintiles_2012) %>% 
   summarise("Median income 2012" = median(`2012`),
@@ -1082,7 +1082,7 @@ Quintile 1 also has a longer right tail, indicating higher income increases than
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Distribution of changes in MSOA incomes between 2012 and 2020"
@@ -1093,7 +1093,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select(MSOA21HCLNM, pc_change_2012_2020, income_quintiles_2012)
 
 
@@ -1163,7 +1163,7 @@ plot
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Distribution of changes in MSOA incomes between 2012 and 2020"
@@ -1174,7 +1174,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select(MSOA21HCLNM, pc_change_2012_2020, income_quintiles_2012)
 
 
@@ -1255,7 +1255,7 @@ For the rest of the analysis we are going to concentrate on the areas belonging 
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Comparison of small area incomes, 2012 and 2020"
@@ -1265,7 +1265,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select("name" = MSOA21HCLNM, 
          `2012`, 
          `2020`, 
@@ -1321,7 +1321,7 @@ This plot shows area incomes in 2012 and 2020 for those areas that were in the l
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Comparison of small area incomes (2012 and 2020), for areas with the lowest 20% of incomes in 2012"
@@ -1331,7 +1331,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df_medians <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df_medians <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select(MSOA21HCLNM, `2012`, `2020`, income_quintiles_2012 ) %>% 
   group_by(income_quintiles_2012) %>% 
   summarise("Median income 2012" = median(`2012`),
@@ -1339,7 +1339,7 @@ df_medians <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.
   ungroup()
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+df <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   filter(income_quintiles_2012 == 1) %>% 
   select("name" = MSOA21HCLNM, 
          `2012`, 
@@ -1430,8 +1430,8 @@ library(aws.s3)
 library(geojsonio)
 library(jsonlite)
 
-source("plots/LPP colours.r")
-source("plots/chart_theme.r")
+source("plot-inputs/LPP colours.r")
+source("plot-inputs/chart_theme.r")
 
 
 TITLE <- "Map of changes in MSOA incomes between 2012 and 2020, for 1st quintiles in 2012"
@@ -1441,7 +1441,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-dfx <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+dfx <- read_csv("plot-inputs/1_small-area-incomes.csv") %>% 
   select("MSOA name" = MSOA21NM, MSOA21HCLNM, pc_change_2012_2020, income_quintiles_2012)
 
 #pivot the quintiles into series
@@ -1550,7 +1550,7 @@ There are more people of lower managerial, administrative and professional occup
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Changes in the distribution of NS-SeC for areas with the highest income rises and the rest of London, between 2012 and 2020"
@@ -1560,7 +1560,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/2a_biggest-inc-rise-nssec-census.csv") 
+df <- read_csv("plot-inputs/2a_biggest-inc-rise-nssec-census.csv") 
 
 plot <- highchart() %>% 
   
@@ -1614,7 +1614,7 @@ The most remarkable drop is in children under 16 and there are also fewer young 
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Changes in the distribution of age for areas with the highest income rises and the rest of London, between 2012 and 2020"
@@ -1624,7 +1624,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/2c_biggest-inc-rise-age-census.csv") 
+df <- read_csv("plot-inputs/2c_biggest-inc-rise-age-census.csv") 
 
 plot <- highchart() %>% 
   
@@ -1679,7 +1679,7 @@ There is a remarkable drop of black communities in those areas. @cr-census-ethni
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Changes in the distribution of ethnicity characteristics for areas with the highest income rises and the rest of London, between 2012 and 2020"
@@ -1689,7 +1689,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/2b_biggest-inc-rise-ethnicity-census.csv") %>% 
+df <- read_csv("plot-inputs/2b_biggest-inc-rise-ethnicity-census.csv") %>% 
   filter(Ethnicity != "Total (%)")
 
 plot <- highchart() %>% 
@@ -1749,7 +1749,7 @@ Fewer families with children and more couples with no children. @cr-census-hhcom
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Changes in the distribution of household composition for areas with the highest income rises and the rest of London, between 2012 and 2020"
@@ -1759,7 +1759,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/2e_biggest-inc-rise-hh-comp-census.csv") 
+df <- read_csv("plot-inputs/2e_biggest-inc-rise-hh-comp-census.csv") 
 
 plot <- highchart() %>% 
   
@@ -1814,7 +1814,7 @@ Fewer mortgage owners, huge drop in social housing tenants and more people on pr
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Changes in the distribution of household tenure for areas with the highest income rises and the rest of London, between 2012 and 2020"
@@ -1824,7 +1824,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/2d_biggest-inc-rise-tenure-census.csv") 
+df <- read_csv("plot-inputs/2d_biggest-inc-rise-tenure-census.csv") 
 
 plot <- highchart() %>% 
   
@@ -1886,7 +1886,7 @@ House prices in those areas are lower than the rest of London but higher than th
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "House prices for areas with the highest income rises and the rest of London, between 2010 and 2023"
@@ -1895,7 +1895,7 @@ Note <- ""
 Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/3_house-prices.csv") %>% 
+df <- read_csv("plot-inputs/3_house-prices.csv") %>% 
   filter(Year != 2024)
 
 
@@ -1955,7 +1955,7 @@ However, house prices in those areas increased at a much higher rate than the re
 library(tidyverse)
 library(highcharter)
 
-source("plots/LPP colours.r")
+source("plot-inputs/LPP colours.r")
 
 
 TITLE <- "Changes in house prices for areas with the highest income rises and the rest of London, between 2010 and 2023"
@@ -1964,7 +1964,7 @@ Note <- ""
 Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
-df <- read_csv("ad-hocs/gentrification/plot-inputs/3_house-prices-inx.csv") %>% 
+df <- read_csv("plot-inputs/3_house-prices-inx.csv") %>% 
   select(-`2024_inx`) %>% 
   rename_with(cols = starts_with("20"),
               ~ str_remove(., "_inx")) %>% 
@@ -2034,8 +2034,8 @@ library(highcharter)
 library(geojsonio)
 library(rmapshaper)
 
-source("plots/LPP colours.r")
-source("plots/chart_theme.r")
+source("plot-inputs/LPP colours.r")
+source("plot-inputs/chart_theme.r")
 
 
 TITLE <- "Change in primary school applications in England and neighbouring counties"
@@ -2045,7 +2045,7 @@ Data_Source <- ""
 Chart_Source <- "London's Poverty Profile 2024"
 
 #read in the data
-df <- read_csv("ad-hocs/gentrification/plot-inputs/4_school_admissions.csv") %>% rename("ONS_CODE" = new_la_code)
+df <- read_csv("plot-inputs/4_school_admissions.csv") %>% rename("ONS_CODE" = new_la_code)
 
 # #LAUA ONS Generalised BGC
 # url.geo <- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Counties_and_Unitary_Authorities_December_2023_Boundaries_UK_BGC/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson"
@@ -2189,8 +2189,8 @@ library(highcharter)
 library(geojsonio)
 library(rmapshaper)
 
-source("plots/LPP colours.r")
-source("plots/chart_theme.r")
+source("plot-inputs/LPP colours.r")
+source("plot-inputs/chart_theme.r")
 
 
 TITLE <- "Change in primary school applications in London and neighbouring counties between 2014/15 and 2024/25"
@@ -2200,7 +2200,7 @@ Data_Source <- "Secondary and primary school applications and offers, DfE"
 Chart_Source <- "London's Poverty Profile 2024"
 
 #read in the data
-df <- read_csv("ad-hocs/gentrification/plot-inputs/4_school_admissions.csv") %>% rename("ONS_CODE" = new_la_code)
+df <- read_csv("plot-inputs/4_school_admissions.csv") %>% rename("ONS_CODE" = new_la_code)
 
 # #LAUA ONS Generalised BGC
 # url.geo <- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Counties_and_Unitary_Authorities_December_2023_Boundaries_UK_BGC/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson"
