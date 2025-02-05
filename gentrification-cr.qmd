@@ -1,11 +1,2335 @@
 ---
-title: "gentrification-cr"
+title: Gentrification in London
+format: 
+  closeread-html:
+    remove-header-space: false
+    mainfont: "Roboto"
+    fontcolor: "#00424f"
+    fontsize: "20pt"
+    cr-style:
+      narrative-background-color-sidebar: "white" #e6f2f4 is the light blue on the LPP website - just fyi
+      section-background-color: "white"
+      narrative-font-family: "Roboto"
+      poem-font-family: "Roboto"
+      narrative-font-size: "20pt"
+      narrative-text-color-sidebar: "#00424f"
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-```{r}
-1 + 1
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(root.dir = rprojroot::find_rstudio_root_file()) #this sets the working directory to be the same as the rproj file for the chunk editor
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file()) #this sets the working directory to be the same as the rproj file for the knitted file
 ```
+
+
+
+::: {.cr-section}
+
+Current definition:@cr-gentrification-cdrc-definition
+
+[@cr-gentrification-cdrc-definition]{highlight="cr-rapidly,cr-changes,cr-its,cr-population,cr-influx,cr-displacement"}
+
+
+:::{#cr-gentrification-cdrc-definition}
+
+| Gentrification is where an area [rapidly]{#cr-rapidly} [changes]{#cr-changes} [its]{#cr-its} [population]{#cr-population}, caused by an [influx]{#cr-influx} of wealthier households, which can cause a [displacement]{#cr-displacement} of the previous population due to increasing unaffordability of rent and local services provided, resulting in the breakup of established communities and social networks.
+
+:::
+
+Our definition:@cr-gentrification-definition
+
+[@cr-gentrification-definition]{highlight="cr-influx,cr-of1,cr-more,cr-affluent,cr-residents,cr-lower,cr-income,cr-displacement,cr-of2,cr-the,cr-previous,cr-population"}
+
+
+:::{#cr-gentrification-definition}
+
+| The [influx]{#cr-influx} [of]{#cr-of1} [more]{#cr-more} [affluent]{#cr-affluent} [residents]{#cr-residents} in [lower]{#cr-lower} [income]{#cr-income} areas, relative to the residents that were already there and [displacement]{#cr-displacement} [of]{#cr-of2} [the]{#cr-the} [previous]{#cr-previous} [population]{#cr-population}. 
+
+:::
+
+
+Data:@cr-measurement
+
+
+:::{#cr-measurement}
+
+Identification of gentrified areas  
+  
+- Changes in income: Income estimates for small areas, 2010/12 - 2018/20, MSOA level, 2020 prices
+- Population changes: Census 2021 compared to Census 2011
+
+Context  
+
+- House price changes for 2010 to 2023
+- Changes in primary school applications between 2013/14 and 2023/24
+
+:::
+
+@cr-area-incomes
+
+:::{#cr-area-incomes}
+
+## Area Incomes
+
+:::
+
+
+
+Average MSOA incomes have remained fairly stable between 2012 and 2020, when taking inflation into account. @cr-income-boxplots
+
+This boxplot shows the real income medians for London MSOAs, in 2020 prices. 
+
+
+::: {#cr-income-boxplots}
+```{r income-boxplots, include = TRUE, echo = FALSE, message = FALSE}
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "MSOA incomes summary (2012 - 2020)"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select(MSOA21HCLNM, `2012`, `2014`, `2016`, `2018`, `2020`) %>% 
+  pivot_longer(cols = c(`2012`, `2014`, `2016`, `2018`, `2020`),
+               names_to = "Year",
+               values_to = "Income") %>% 
+  data_to_boxplot(., 
+                  variable = round(Income),
+                  group_var = Year,
+                  add_outliers = T) 
+
+df$showInLegend[1] <- TRUE
+df$showInLegend[2] <- TRUE
+
+df$name[1] <- "Boxplot"
+df$name[2] <- "Outliers"
+
+
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  hc_plotOptions(boxplot = list(medianColor = discreet.set[6],
+                                medianWidth = 3)) %>% 
+  
+  hc_xAxis(type = "category") %>%
+  
+  hc_add_series_list(df) %>% 
+  
+  hc_colors(discreet.set) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  #hc_legend() %>% 
+  # hc_tooltip(headerFormat = "Outliers<br/>",
+  #            pointFormat = "Income: £{point.y:.0f}") %>%
+  
+  hc_exporting(enabled = TRUE) 
+
+
+plot
+
+```
+:::
+:::
+
+::: cr-section
+
+
+The income distributions are broadly similar across years. Starting with 2012, @cr-income-density-plots-2012
+
+::: {#cr-income-density-plots-2012}
+```{r income-density-plots-2012, include = TRUE, echo = FALSE, message = FALSE}
+
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Distribution of MSOA incomes between 2012 and 2020"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select(MSOA21HCLNM, `2012`, `2014`, `2016`, `2018`, `2020`)
+
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  #hc_plotOptions(bar = list(colourByPoint = T)) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_xAxis(title = list(text = "MSOA income distributions")) %>%
+  
+  hc_yAxis(title = list(text = "Density")) %>%
+  
+  hc_add_series(type = "area",
+                name = "2012",
+                data = density(df$`2012`),
+                color = discreet.set[[1]],
+                visible = T) %>%
+  
+  hc_add_series(type = "area",
+                name = "2014",
+                data = density(df$`2014`),
+                color = discreet.set[[2]],
+                visible = F) %>%
+  
+  hc_add_series(type = "area",
+                name = "2016",
+                data = density(df$`2016`),
+                color = discreet.set[[3]],
+                visible = F) %>%
+  
+  hc_add_series(type = "area",
+                name = "2018",
+                data = density(df$`2018`),
+                color = discreet.set[[4]],
+                visible = F) %>%
+  
+  hc_add_series(type = "area",
+                name = "2020",
+                data = density(df$`2020`),
+                color = discreet.set[[6]],
+                visible = F) %>%
+  
+  hc_tooltip(headerFormat = "{series.name}<br/>",
+             pointFormat = "Income: <b>{point.x:.2f}%</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+```
+:::
+
+
+then 2014, @cr-income-density-plots-2014
+
+::: {#cr-income-density-plots-2014}
+```{r income-density-plots-2014, include = TRUE, echo = FALSE, message = FALSE}
+
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Distribution of MSOA incomes between 2012 and 2020"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select(MSOA21HCLNM, `2012`, `2014`, `2016`, `2018`, `2020`)
+
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  #hc_plotOptions(bar = list(colourByPoint = T)) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_xAxis(title = list(text = "MSOA income distributions")) %>%
+  
+  hc_yAxis(title = list(text = "Density")) %>%
+  
+  hc_add_series(type = "area",
+                name = "2012",
+                data = density(df$`2012`),
+                color = discreet.set[[1]],
+                visible = T) %>%
+  
+  hc_add_series(type = "area",
+                name = "2014",
+                data = density(df$`2014`),
+                color = discreet.set[[2]],
+                visible = T) %>%
+  
+  hc_add_series(type = "area",
+                name = "2016",
+                data = density(df$`2016`),
+                color = discreet.set[[3]],
+                visible = F) %>%
+  
+  hc_add_series(type = "area",
+                name = "2018",
+                data = density(df$`2018`),
+                color = discreet.set[[4]],
+                visible = F) %>%
+  
+  hc_add_series(type = "area",
+                name = "2020",
+                data = density(df$`2020`),
+                color = discreet.set[[6]],
+                visible = F) %>%
+  
+  hc_tooltip(headerFormat = "{series.name}<br/>",
+             pointFormat = "Income: <b>{point.x:.2f}%</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+```
+:::
+
+2016, @cr-income-density-plots-2016
+
+::: {#cr-income-density-plots-2016}
+```{r income-density-plots-2016, include = TRUE, echo = FALSE, message = FALSE}
+
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Distribution of MSOA incomes between 2012 and 2020"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select(MSOA21HCLNM, `2012`, `2014`, `2016`, `2018`, `2020`)
+
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  #hc_plotOptions(bar = list(colourByPoint = T)) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_xAxis(title = list(text = "MSOA income distributions")) %>%
+  
+  hc_yAxis(title = list(text = "Density")) %>%
+  
+  hc_add_series(type = "area",
+                name = "2012",
+                data = density(df$`2012`),
+                color = discreet.set[[1]],
+                visible = T) %>%
+  
+  hc_add_series(type = "area",
+                name = "2014",
+                data = density(df$`2014`),
+                color = discreet.set[[2]],
+                visible = T) %>%
+  
+  hc_add_series(type = "area",
+                name = "2016",
+                data = density(df$`2016`),
+                color = discreet.set[[3]],
+                visible = T) %>%
+  
+  hc_add_series(type = "area",
+                name = "2018",
+                data = density(df$`2018`),
+                color = discreet.set[[4]],
+                visible = F) %>%
+  
+  hc_add_series(type = "area",
+                name = "2020",
+                data = density(df$`2020`),
+                color = discreet.set[[6]],
+                visible = F) %>%
+  
+  hc_tooltip(headerFormat = "{series.name}<br/>",
+             pointFormat = "Income: <b>{point.x:.2f}%</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+```
+:::
+
+2018, @cr-income-density-plots-2018
+
+::: {#cr-income-density-plots-2018}
+```{r income-density-plots-2018, include = TRUE, echo = FALSE, message = FALSE}
+
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Distribution of MSOA incomes between 2012 and 2020"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select(MSOA21HCLNM, `2012`, `2014`, `2016`, `2018`, `2020`)
+
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  #hc_plotOptions(bar = list(colourByPoint = T)) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_xAxis(title = list(text = "MSOA income distributions")) %>%
+  
+  hc_yAxis(title = list(text = "Density")) %>%
+  
+  hc_add_series(type = "area",
+                name = "2012",
+                data = density(df$`2012`),
+                color = discreet.set[[1]],
+                visible = T) %>%
+  
+  hc_add_series(type = "area",
+                name = "2014",
+                data = density(df$`2014`),
+                color = discreet.set[[2]],
+                visible = T) %>%
+  
+  hc_add_series(type = "area",
+                name = "2016",
+                data = density(df$`2016`),
+                color = discreet.set[[3]],
+                visible = T) %>%
+  
+  hc_add_series(type = "area",
+                name = "2018",
+                data = density(df$`2018`),
+                color = discreet.set[[4]],
+                visible = T) %>%
+  
+  hc_add_series(type = "area",
+                name = "2020",
+                data = density(df$`2020`),
+                color = discreet.set[[6]],
+                visible = F) %>%
+  
+  hc_tooltip(headerFormat = "{series.name}<br/>",
+             pointFormat = "Income: <b>{point.x:.2f}%</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+```
+:::
+
+and 2020. @cr-income-density-plots-2020
+
+::: {#cr-income-density-plots-2020}
+```{r income-density-plots-2020, include = TRUE, echo = FALSE, message = FALSE}
+
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Distribution of MSOA incomes between 2012 and 2020"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select(MSOA21HCLNM, `2012`, `2014`, `2016`, `2018`, `2020`)
+
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  #hc_plotOptions(bar = list(colourByPoint = T)) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_xAxis(title = list(text = "MSOA income distributions")) %>%
+  
+  hc_yAxis(title = list(text = "Density")) %>%
+  
+  hc_add_series(type = "area",
+                name = "2012",
+                data = density(df$`2012`),
+                color = discreet.set[[1]],
+                visible = T) %>%
+  
+  hc_add_series(type = "area",
+                name = "2014",
+                data = density(df$`2014`),
+                color = discreet.set[[2]],
+                visible = T) %>%
+  
+  hc_add_series(type = "area",
+                name = "2016",
+                data = density(df$`2016`),
+                color = discreet.set[[3]],
+                visible = T) %>%
+  
+  hc_add_series(type = "area",
+                name = "2018",
+                data = density(df$`2018`),
+                color = discreet.set[[4]],
+                visible = T) %>%
+  
+  hc_add_series(type = "area",
+                name = "2020",
+                data = density(df$`2020`),
+                color = discreet.set[[6]],
+                visible = T) %>%
+  
+  hc_tooltip(headerFormat = "{series.name}<br/>",
+             pointFormat = "Income: <b>{point.x:.2f}%</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+```
+:::
+
+However, if we look at 2012 and 2020 only, we see that there are some differences in the distribution of incomes. @cr-income-density-plots-off 
+
+Compared to 2012, there are more incomes in 2020 that centre towards the middle of the distribution. [@cr-income-density-plots-off]{pan-to="30%,30%" scale-by="2.5"}
+
+and fewer incomes at the higher end of the distribution. [@cr-income-density-plots-off]{pan-to="-55%,-30%" scale-by="2.5"}
+
+This means that, although the median incomes are not very different between the two years, incomes are lower in the highest income bracket in 2020, compared to 2012. @cr-income-density-plots-off
+
+::: {#cr-income-density-plots-off}
+```{r income-density-plots-off, include = TRUE, echo = FALSE, message = FALSE}
+
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Distribution of MSOA incomes between 2012 and 2020"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select(MSOA21HCLNM, `2012`, `2014`, `2016`, `2018`, `2020`)
+
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  #hc_plotOptions(bar = list(colourByPoint = T)) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_xAxis(title = list(text = "MSOA income distributions")) %>%
+  
+  hc_yAxis(title = list(text = "Density")) %>%
+  
+  hc_add_series(type = "area",
+                name = "2012",
+                data = density(df$`2012`),
+                color = discreet.set[[1]], 
+                visible = T) %>%
+  
+  hc_add_series(type = "area",
+                name = "2014",
+                data = density(df$`2014`),
+                color = discreet.set[[2]], 
+                visible = F) %>%
+  
+  hc_add_series(type = "area",
+                name = "2016",
+                data = density(df$`2016`),
+                color = discreet.set[[3]], 
+                visible = F) %>%
+  
+  hc_add_series(type = "area",
+                name = "2018",
+                data = density(df$`2018`),
+                color = discreet.set[[4]], 
+                visible = F) %>%
+  
+  hc_add_series(type = "area",
+                name = "2020",
+                data = density(df$`2020`),
+                color = discreet.set[[6]], 
+                visible = T) %>%
+  
+  hc_tooltip(headerFormat = "{series.name}<br/>",
+             pointFormat = "Income: <b>{point.x:.2f}%</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+```
+:::
+:::
+
+::: cr-section
+We can see this more clearly if we look at income levels for different income quinitles. @cr-income-byQuin-medians-2012
+
+In 2012, the lowest income quintile had an average income of just under £30k @cr-income-byQuin-medians-2012-withHighlightLowest
+
+and the highest just under £50k. @cr-income-byQuin-medians-2012-withHighlightHighest
+
+
+::: {#cr-income-byQuin-medians-2012}
+```{r income-byQuin-medians-2012, include = TRUE, echo = FALSE, message = FALSE}
+
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Median 2012 MSOA incomes"
+SUBTITLE <- "By area income quintile in 2012"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select(MSOA21HCLNM, `2012`, `2020`, income_quintiles_2012 ) %>% 
+  group_by(income_quintiles_2012) %>% 
+  summarise("Median income 2012" = median(`2012`),
+            "Median income 2020" = median(`2020`)) %>% 
+  ungroup() %>% 
+  mutate("name" = case_when(income_quintiles_2012 == 1 ~ "1st (lowest income)",
+                                                income_quintiles_2012 == 2 ~ "2nd",
+                                                income_quintiles_2012 == 3 ~ "3rd",
+                                                income_quintiles_2012 == 4 ~ "4th",
+                                                income_quintiles_2012 == 5 ~ "5th (highest income)")) %>% 
+  select("y" = `Median income 2012`,
+         name) %>% 
+  mutate("color" = c(discreet.set[1], comparison.pair[1], comparison.pair[1], comparison.pair[1], comparison.pair[1]))
+
+plot <- 
+highchart() %>%
+  hc_chart(type = 'bar', polar = FALSE) %>%
+  hc_xAxis(categories = df$name) %>% 
+  hc_add_series(df,
+                name = "Median incomes in 2012",
+                showInLegend = F) %>% 
+
+  hc_title(text = TITLE,
+           align = "left",
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>%
+  
+  hc_subtitle(text = SUBTITLE,
+           align = "left",
+           style = list(fontSize ="14px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>%
+
+  hc_yAxis(title = list(text = "£")) %>%
+
+  # hc_xAxis(categories = df$`Income quintiles in 2012`,
+  #          title = list(text = "")) %>%
+
+  hc_tooltip(headerFormat = "{series.name}:<br/>",
+             pointFormat = "<b>£{point.y:.0f}</b><br/>") %>%
+
+  hc_exporting(enabled = TRUE)
+
+plot
+
+
+
+```
+:::
+
+::: {#cr-income-byQuin-medians-2012-withHighlightLowest}
+```{r income-byQuin-medians-2012-withHighlightLowest, include = TRUE, echo = FALSE, message = FALSE}
+
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Median 2012 MSOA incomes"
+SUBTITLE <- "By area income quintile in 2012"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select(MSOA21HCLNM, `2012`, `2020`, income_quintiles_2012 ) %>% 
+  group_by(income_quintiles_2012) %>% 
+  summarise("Median income 2012" = median(`2012`),
+            "Median income 2020" = median(`2020`)) %>% 
+  ungroup() %>% 
+  mutate("name" = case_when(income_quintiles_2012 == 1 ~ "1st (lowest income)",
+                                                income_quintiles_2012 == 2 ~ "2nd",
+                                                income_quintiles_2012 == 3 ~ "3rd",
+                                                income_quintiles_2012 == 4 ~ "4th",
+                                                income_quintiles_2012 == 5 ~ "5th (highest income)")) %>% 
+  select("y" = `Median income 2012`,
+         name) %>% 
+  mutate("color" = c(discreet.set[6], comparison.pair[1], comparison.pair[1], comparison.pair[1], comparison.pair[1]))
+
+plot <- 
+highchart() %>%
+  hc_chart(type = 'bar', polar = FALSE) %>%
+  hc_xAxis(categories = df$name) %>% 
+  hc_add_series(df,
+                name = "Median incomes in 2012",
+                showInLegend = F) %>% 
+
+  hc_title(text = TITLE,
+           align = "left",
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>%
+  
+   hc_subtitle(text = SUBTITLE,
+           align = "left",
+           style = list(fontSize ="14px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>%
+
+  hc_yAxis(title = list(text = "£")) %>%
+
+  # hc_xAxis(categories = df$`Income quintiles in 2012`,
+  #          title = list(text = "")) %>%
+
+  hc_tooltip(headerFormat = "{series.name}:<br/>",
+             pointFormat = "<b>£{point.y:.0f}</b><br/>") %>%
+
+  hc_exporting(enabled = TRUE)
+
+plot
+
+
+```
+:::
+
+
+::: {#cr-income-byQuin-medians-2012-withHighlightHighest}
+```{r income-byQuin-medians-2012-withHighlightHighest, include = TRUE, echo = FALSE, message = FALSE}
+
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Median 2012 MSOA incomes"
+SUBTITLE <- "By area income quintile in 2012"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select(MSOA21HCLNM, `2012`, `2020`, income_quintiles_2012 ) %>% 
+  group_by(income_quintiles_2012) %>% 
+  summarise("Median income 2012" = median(`2012`),
+            "Median income 2020" = median(`2020`)) %>% 
+  ungroup() %>% 
+  mutate("name" = case_when(income_quintiles_2012 == 1 ~ "1st (lowest income)",
+                                                income_quintiles_2012 == 2 ~ "2nd",
+                                                income_quintiles_2012 == 3 ~ "3rd",
+                                                income_quintiles_2012 == 4 ~ "4th",
+                                                income_quintiles_2012 == 5 ~ "5th (highest income)")) %>% 
+  select("y" = `Median income 2012`,
+         name) %>% 
+  mutate("color" = c(discreet.set[6], comparison.pair[1], comparison.pair[1], comparison.pair[1], discreet.set[6]))
+
+plot <- 
+highchart() %>%
+  hc_chart(type = 'bar', polar = FALSE) %>%
+  hc_xAxis(categories = df$name) %>% 
+  hc_add_series(df,
+                name = "Median incomes in 2012",
+                showInLegend = F) %>% 
+
+  hc_title(text = TITLE,
+           align = "left",
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>%
+  
+   hc_subtitle(text = SUBTITLE,
+           align = "left",
+           style = list(fontSize ="14px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>%
+
+  hc_yAxis(title = list(text = "£")) %>%
+
+  # hc_xAxis(categories = df$`Income quintiles in 2012`,
+  #          title = list(text = "")) %>%
+
+  hc_tooltip(headerFormat = "{series.name}:<br/>",
+             pointFormat = "<b>£{point.y:.0f}</b><br/>") %>%
+
+  hc_exporting(enabled = TRUE)
+
+plot
+
+
+```
+:::
+
+By 2020, incomes had only slightly increased. @cr-income-byQuin-medians-2020
+
+The 60% of MSOAs with the lowest incomes in 2012 had slightly higher median incomes in 2020. @cr-income-byQuin-medians-2020-withHighlightLowest
+
+The highest income MSOAs in 2012 actually saw a drop in their median incomes in 2020. @cr-income-byQuin-medians-2020-withHighlightHighest
+
+
+
+
+::: {#cr-income-byQuin-medians-2020}
+```{r income-byQuin-medians-2020, include = TRUE, echo = FALSE, message = FALSE}
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Median MSOA incomes, by area income quintile in 2012"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select(MSOA21HCLNM, `2012`, `2020`, income_quintiles_2012 ) %>% 
+  group_by(income_quintiles_2012) %>% 
+  summarise("Median income 2012" = median(`2012`),
+            "Median income 2020" = median(`2020`)) %>% 
+  ungroup() %>% 
+  mutate("Income quintiles in 2012" = case_when(income_quintiles_2012 == 1 ~ "1st (lowest income)",
+                                                income_quintiles_2012 == 2 ~ "2nd",
+                                                income_quintiles_2012 == 3 ~ "3rd",
+                                                income_quintiles_2012 == 4 ~ "4th",
+                                                income_quintiles_2012 == 5 ~ "5th (highest income)")) %>% 
+  select(-income_quintiles_2012) %>% 
+  pivot_longer(cols = starts_with("Median"),
+               names_to = "group",
+               values_to = "y") %>% 
+  rename("x" = `Income quintiles in 2012`) %>% 
+  mutate("color" = c(comparison.pair[1], comparison.pair[2],
+                     comparison.pair[1], comparison.pair[2],
+                     comparison.pair[1], comparison.pair[2],
+                     comparison.pair[1], comparison.pair[2],
+                     comparison.pair[1], comparison.pair[2])) 
+
+plot <- df %>% 
+  
+  hchart("bar", 
+         hcaes(x = "x", y = "y", 
+               group = "group", 
+               color = "color"),
+         showInLegend = F) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_yAxis(title = list(text = "£")) %>%
+  hc_xAxis(title = list(text = "")) %>%
+  
+  hc_tooltip(headerFormat = "{series.name}:<br/>",
+             pointFormat = "<b>£{point.y:.0f}</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+
+
+```
+:::
+
+::: {#cr-income-byQuin-medians-2020-withHighlightLowest}
+```{r income-byQuin-medians-2020-withHighlightLowest, include = TRUE, echo = FALSE, message = FALSE}
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Median MSOA incomes, by area income quintile in 2012"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select(MSOA21HCLNM, `2012`, `2020`, income_quintiles_2012 ) %>% 
+  group_by(income_quintiles_2012) %>% 
+  summarise("Median income 2012" = median(`2012`),
+            "Median income 2020" = median(`2020`)) %>% 
+  ungroup() %>% 
+  mutate("Income quintiles in 2012" = case_when(income_quintiles_2012 == 1 ~ "1st (lowest income)",
+                                                income_quintiles_2012 == 2 ~ "2nd",
+                                                income_quintiles_2012 == 3 ~ "3rd",
+                                                income_quintiles_2012 == 4 ~ "4th",
+                                                income_quintiles_2012 == 5 ~ "5th (highest income)")) %>% 
+  select(-income_quintiles_2012) %>% 
+  pivot_longer(cols = starts_with("Median"),
+               names_to = "group",
+               values_to = "y") %>% 
+  rename("x" = `Income quintiles in 2012`) %>% 
+  mutate("color" = c(comparison.pair[1], discreet.set[6],
+                     comparison.pair[1], discreet.set[6],
+                     comparison.pair[1], discreet.set[6],
+                     comparison.pair[1], comparison.pair[2],
+                     comparison.pair[1], comparison.pair[2])) 
+
+plot <- df %>% 
+  
+  hchart("bar", 
+         hcaes(x = "x", y = "y", 
+               group = "group", 
+               color = "color"),
+         showInLegend = F) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_yAxis(title = list(text = "£")) %>%
+  hc_xAxis(title = list(text = "")) %>%
+  
+  hc_tooltip(headerFormat = "{series.name}:<br/>",
+             pointFormat = "<b>£{point.y:.0f}</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+
+```
+:::
+
+::: {#cr-income-byQuin-medians-2020-withHighlightHighest}
+```{r income-byQuin-medians-2020-withHighlightHighest, include = TRUE, echo = FALSE, message = FALSE}
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Median MSOA incomes, by area income quintile in 2012"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select(MSOA21HCLNM, `2012`, `2020`, income_quintiles_2012 ) %>% 
+  group_by(income_quintiles_2012) %>% 
+  summarise("Median income 2012" = median(`2012`),
+            "Median income 2020" = median(`2020`)) %>% 
+  ungroup() %>% 
+  mutate("Income quintiles in 2012" = case_when(income_quintiles_2012 == 1 ~ "1st (lowest income)",
+                                                income_quintiles_2012 == 2 ~ "2nd",
+                                                income_quintiles_2012 == 3 ~ "3rd",
+                                                income_quintiles_2012 == 4 ~ "4th",
+                                                income_quintiles_2012 == 5 ~ "5th (highest income)")) %>% 
+  select(-income_quintiles_2012) %>% 
+  pivot_longer(cols = starts_with("Median"),
+               names_to = "group",
+               values_to = "y") %>% 
+  rename("x" = `Income quintiles in 2012`) %>% 
+  mutate("color" = c(comparison.pair[1], discreet.set[6],
+                     comparison.pair[1], discreet.set[6],
+                     comparison.pair[1], discreet.set[6],
+                     comparison.pair[1], comparison.pair[2],
+                     comparison.pair[1], discreet.set[2])) 
+
+plot <- df %>% 
+  
+  hchart("bar", 
+         hcaes(x = "x", y = "y", 
+               group = "group", 
+               color = "color"),
+         showInLegend = F) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_yAxis(title = list(text = "£")) %>%
+  hc_xAxis(title = list(text = "")) %>%
+  
+  hc_tooltip(headerFormat = "{series.name}:<br/>",
+             pointFormat = "<b>£{point.y:.0f}</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+
+
+```
+:::
+
+If we take a look at the distribution of those changes in income, we see that there are differences between the 2012 quintiles. @cr-income-change-density
+
+Specifically, when looking at quintiles 1 and 5, we see that the percentage changes in income between 2012 and 2020 are a lot higher for areas in the lowest income quintile in 2012 compared to areas in the highest income quintile in that year. @cr-income-change-density-1st5thQuin
+
+Quintile 1 also has a longer right tail, indicating higher income increases than some more affluent areas. [@cr-income-change-density-1st5thQuin]{pan-to="-55%,-30%" scale-by="2.5"}
+
+::: {#cr-income-change-density}
+```{r income-change-density, include = TRUE, echo = FALSE, message = FALSE}
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Distribution of changes in MSOA incomes between 2012 and 2020"
+SUBTITLE <- "By area income quintile in 2012"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select(MSOA21HCLNM, pc_change_2012_2020, income_quintiles_2012)
+
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  #hc_plotOptions(bar = list(colourByPoint = T)) %>% 
+
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_subtitle(text = SUBTITLE, 
+           align = "left", 
+           style = list(fontSize ="14px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_xAxis(title = list(text = "Percentage change in MSOA incomes between 2012-2020")) %>%
+  
+  hc_yAxis(title = list(text = "Density")) %>%
+  
+  hc_add_series(type = "area",
+                name = "1st income quintile in 2012 (lowest)",
+                data = density(df$pc_change_2012_2020[df$income_quintiles_2012 == 1]),
+                color = discreet.set[[1]]) %>%
+  
+  hc_add_series(type = "area",
+                name = "2nd income quintile in 2012",
+                data = density(df$pc_change_2012_2020[df$income_quintiles_2012 == 2]),
+                color = discreet.set[[2]]) %>%
+  
+  hc_add_series(type = "area",
+                name = "3rd income quintile in 2012",
+                data = density(df$pc_change_2012_2020[df$income_quintiles_2012 == 3]),
+                color = discreet.set[[3]]) %>%
+  
+  hc_add_series(type = "area",
+                name = "4th income quintile in 2012",
+                data = density(df$pc_change_2012_2020[df$income_quintiles_2012 == 4]),
+                color = discreet.set[[4]]) %>%
+  
+  hc_add_series(type = "area",
+                name = "5th income quintile in 2012 (highest)",
+                data = density(df$pc_change_2012_2020[df$income_quintiles_2012 == 5]),
+                color = discreet.set[[6]]) %>%
+  
+  hc_tooltip(headerFormat = "{series.name}<br/>",
+             pointFormat = "Percentage change: <b>{point.x:.2f}%</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+
+```
+:::
+
+::: {#cr-income-change-density-1st5thQuin}
+```{r income-change-density-1st5thQuin, include = TRUE, echo = FALSE, message = FALSE}
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Distribution of changes in MSOA incomes between 2012 and 2020"
+SUBTITLE <- "By area income quintile in 2012"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select(MSOA21HCLNM, pc_change_2012_2020, income_quintiles_2012)
+
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  #hc_plotOptions(bar = list(colourByPoint = T)) %>% 
+
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_subtitle(text = SUBTITLE, 
+           align = "left", 
+           style = list(fontSize ="14px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_xAxis(title = list(text = "Percentage change in MSOA incomes between 2012-2020")) %>%
+  
+  hc_yAxis(title = list(text = "Density")) %>%
+  
+  hc_add_series(type = "area",
+                name = "1st income quintile in 2012 (lowest)",
+                data = density(df$pc_change_2012_2020[df$income_quintiles_2012 == 1]),
+                color = discreet.set[[1]],
+                visible = T) %>%
+  
+  hc_add_series(type = "area",
+                name = "2nd income quintile in 2012",
+                data = density(df$pc_change_2012_2020[df$income_quintiles_2012 == 2]),
+                color = discreet.set[[2]],
+                visible = F) %>%
+  
+  hc_add_series(type = "area",
+                name = "3rd income quintile in 2012",
+                data = density(df$pc_change_2012_2020[df$income_quintiles_2012 == 3]),
+                color = discreet.set[[3]],
+                visible = F) %>%
+  
+  hc_add_series(type = "area",
+                name = "4th income quintile in 2012",
+                data = density(df$pc_change_2012_2020[df$income_quintiles_2012 == 4]),
+                color = discreet.set[[4]],
+                visible = F) %>%
+  
+  hc_add_series(type = "area",
+                name = "5th income quintile in 2012 (highest)",
+                data = density(df$pc_change_2012_2020[df$income_quintiles_2012 == 5]),
+                color = discreet.set[[6]],
+                visible = T) %>%
+  
+  hc_tooltip(headerFormat = "{series.name}<br/>",
+             pointFormat = "Percentage change: <b>{point.x:.2f}%</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+
+```
+:::
+
+
+Here are incomes in 2012 and 2020 plotted. @cr-incomes-scatterplot
+
+For the rest of the analysis we are going to concentrate on the areas belonging to quintile 1 in 2012. [@cr-incomes-scatterplot]{pan-to="75%,-40%" scale-by="3.5"}
+
+
+::: {#cr-incomes-scatterplot}
+```{r incomes-scatterplot, include = TRUE, echo = FALSE, message = FALSE}
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Comparison of small area incomes, 2012 and 2020"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select("name" = MSOA21HCLNM, 
+         `2012`, 
+         `2020`, 
+         income_quintiles_2012)
+
+
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  hc_add_series(df,
+                type = "scatter", 
+                hcaes(x = `2012`, 
+                      y = `2020`,
+                      color = income_quintiles_2012),
+                showInLegend = F) %>%
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_yAxis(title = list(text = "Incomes in 2020")) %>%
+  
+  hc_xAxis(title = list(text = "Incomes in 2012")) %>%
+  
+
+  hc_colors(discreet.set) %>% 
+  
+  
+  hc_tooltip(headerFormat = "{point.point.name}:<br/>",
+             pointFormat = "2012: {point.x:.0f} <br> 2020: {point.y:.0f}") %>% 
+  
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+```
+:::
+
+
+This plot shows area incomes in 2012 and 2020 for those areas that were in the lowest income quintile in 2012, with the median incomes for each year annotated. We are interested in the areas with the highest income rises - areas that were below the median in 2012 and above the median in 2020. @cr-incomes-scatterplot-1stQuin
+
+
+::: {#cr-incomes-scatterplot-1stQuin}
+```{r incomes-scatterplot-1stQuin, include = TRUE, echo = FALSE, message = FALSE}
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Comparison of small area incomes (2012 and 2020), for areas with the lowest 20% of incomes in 2012"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df_medians <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select(MSOA21HCLNM, `2012`, `2020`, income_quintiles_2012 ) %>% 
+  group_by(income_quintiles_2012) %>% 
+  summarise("Median income 2012" = median(`2012`),
+            "Median income 2020" = median(`2020`)) %>% 
+  ungroup()
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  filter(income_quintiles_2012 == 1) %>% 
+  select("name" = MSOA21HCLNM, 
+         `2012`, 
+         `2020`)
+
+
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  hc_add_series(df,
+                type = "scatter", 
+                hcaes(x = `2012`, 
+                      y = `2020`),
+                showInLegend = F) %>%
+  
+  #hc_plotOptions(bar = list(colourByPoint = T)) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_yAxis(title = list(text = "Incomes in 2020"),
+           plotLines = list(
+             list(color = discreet.set[6],
+                  width = 2,
+                  value = df_medians$`Median income 2020`[df_medians$income_quintiles_2012 == 1],
+                  label = list(text = paste0("Median income in 2020: £", 
+                                             round(df_medians$`Median income 2020`[df_medians$income_quintiles_2012 == 1])),
+                               # rotation = 360,
+                               # y = 17,
+                               x = -18,
+                               style = list(color = discreet.set[6],
+                                            fontFamily = "Arial",
+                                            fontSize = "12px",
+                                            fontWeight ="bold"))))) %>%
+  
+  hc_xAxis(title = list(text = "Incomes in 2012"),
+           plotLines = list(
+             list(color = discreet.set[2],
+                  width = 2,
+                  value = df_medians$`Median income 2012`[df_medians$income_quintiles_2012 == 1],
+                  label = list(text = paste0("Median income in 2012: £", 
+                                            round(df_medians$`Median income 2012`[df_medians$income_quintiles_2012 == 1])),
+                               rotation = 360,
+                               # y = 17,
+                               x = -185,
+                               style = list(color = discreet.set[2],
+                                            fontFamily = "Arial",
+                                            fontSize = "12px",
+                                            fontWeight ="bold"))))) %>%
+  
+  
+  hc_colors(discreet.set) %>% 
+  
+  
+  hc_tooltip(headerFormat = "{point.point.name}:<br/>",
+             pointFormat = "2012: {point.x:.0f} <br> 2020: {point.y:.0f}") %>% 
+  
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+# "#007a8b" "#442563" "#f7be00" "#e53d51" "#00424f" "#d99ec7"
+
+
+
+```
+:::
+
+
+And here they are on a map. @cr-incomes-map-1stQuin
+
+
+::: {#cr-incomes-map-1stQuin}
+```{r incomes-map-1stQuin, include = TRUE, echo = FALSE, message = FALSE}
+
+#map of the msoas that were in the low income quin and have seen most change
+
+library(tidyverse)
+library(highcharter)
+library(aws.s3)
+library(geojsonio)
+library(jsonlite)
+
+source("plots/LPP colours.r")
+source("plots/chart_theme.r")
+
+
+TITLE <- "Map of changes in MSOA incomes between 2012 and 2020, for 1st quintiles in 2012"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+dfx <- read_csv("ad-hocs/gentrification/plot-inputs/1_small-area-incomes.csv") %>% 
+  select("MSOA name" = MSOA21NM, MSOA21HCLNM, pc_change_2012_2020, income_quintiles_2012)
+
+#pivot the quintiles into series
+dfx <- dfx %>% 
+  mutate(income_quintiles_2012 = case_when(
+    income_quintiles_2012 == 1 ~ "1st income quintile in 2012 (lowest)",
+    income_quintiles_2012 == 2 ~ "2nd income quintile in 2012",
+    income_quintiles_2012 == 3 ~ "3rd income quintile in 2012",
+    income_quintiles_2012 == 4 ~ "4th income quintile in 2012",
+    income_quintiles_2012 == 5 ~ "5th income quintile in 2012 (highest)",
+    TRUE ~ "Unknown"
+  )) 
+
+#make all quintiles NA apart from the 5th 
+dfx <- dfx %>% 
+  mutate(pc_change_2012_2020 = case_when(
+    `income_quintiles_2012` == "1st income quintile in 2012 (lowest)" ~ pc_change_2012_2020,
+    TRUE ~ NA
+  ))
+
+dfx$pc_change_2012_2020 <- round(dfx$pc_change_2012_2020, 1)
+dfx$tooltip1 <- dfx$MSOA21HCLNM
+
+
+#fetch msoa bounds
+msoa_bounds <- s3read_using(readRDS, # here you tell the s3read_using which read function you are using, and the arguments of the function can follow inside after a comma as you would in the original function)
+                            object = "Middle_layer_Super_Output_Areas_December_2021_Boundaries_EW_BGC_V3_2024-12-16.rds", 
+                            bucket = "wpi-spatial-data/MSOA")
+msoa_bounds$`MSOA name` <- msoa_bounds$MSOA21NM
+
+msoa_bounds <- msoa_bounds %>% 
+  select(`MSOA name`, geometry) %>% 
+  filter(`MSOA name` %in% dfx$`MSOA name`)
+
+
+#create geojson version ***make sure new variables or any changes are made before this line***
+msoa_bounds <- geojsonio::geojson_json(msoa_bounds, crs = 4326)
+
+#Use geojsonio to make data compatible with hcmap
+msoa_bounds <- jsonlite::fromJSON(msoa_bounds, simplifyVector = F)
+
+colours <- c(theme.set[2], theme.set[3], grey.pair[1], theme.set[5], theme.set[4])
+
+#now join data and colorize etc.
+highchart() %>%
+  hc_add_series_map(map = msoa_bounds,
+                    df = dfx, 
+                    borderColor = "black",
+                    borderWidth = 0.3,
+                    name = "Change in mean income 2012-2020",
+                    value = "pc_change_2012_2020" , #this is the column in the df to be mapped
+                    joinBy = "MSOA name", #this is how it joins to the boundary file
+                    colorByPoint = T,
+                    color = discreet.set,
+                    showInLegend = F) %>% 
+  
+  # This renders a numerical legend with a pointer arrow for the value on the map
+  # for use with continuous numeric data only
+  hc_colorAxis(
+    dataClassColor = "pc_change_2012_2020",
+    min = -20, 
+    max = 20,
+    minColor = colours[1],
+    
+    maxColor = colours[4]
+    #dataClasses = ntile
+    
+  ) %>% 
+  hc_mapView(projection = list(name = "LambertConformalConic")) %>% 
+  hc_title(text = TITLE) %>% 
+  hc_legend(title = list(text = "%"),
+            layout = "horizontal",
+            floating = T,
+            align = "left",
+            symbolRadius = 0) %>% 
+  hc_tooltip(useHTML = T,
+             headerFormat = "",
+             pointFormat = "<b>{series.name}</b><br>
+              <b>MSOA: </b>{point.tooltip1}
+              <b>Change: </b>{point.value}%<br>"
+  ) %>% 
+  hc_add_theme(lpp_theme)
+
+
+
+
+
+
+
+```
+:::
+
+@cr-population-changes
+
+:::{#cr-population-changes}
+
+## Population Changes
+
+:::
+
+There are more people of lower managerial, administrative and professional occupations living in the areas with the highest income increases, compared to the rest of London. There are fewer people of routine occupations, long-term unemployed and students living in those areas compared to the rest of London. @cr-census-nssec
+
+
+::: {#cr-census-nssec}
+```{r census-nssec, include = TRUE, echo = FALSE, message = FALSE}
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Changes in the distribution of NS-SeC for areas with the highest income rises and the rest of London, between 2012 and 2020"
+Title_csv <- "Highest income areas are those that were below the median income for London in 2012 and above the median in 2020."
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/2a_biggest-inc-rise-nssec-census.csv") 
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_yAxis(title = list(text = "Percentage point difference between 2020 and 2012")) %>%
+  
+  hc_xAxis(categories = df$`NS-SeC`, 
+           title = list(text = "")) %>%
+  
+  hc_add_series(type = "bar",
+                name = "Highest income rises",
+                data = df$`Ppt difference for areas with the biggest income rises`,
+                color = discreet.set[6]) %>%
+  
+  hc_add_series(type = "bar",
+                name = "Rest of Quntile 1",
+                data = df$`Ppt difference for areas for the rest of quintile 1`,
+                color = discreet.set[1]) %>%
+  
+  hc_add_series(type = "bar",
+                name = "Rest of London",
+                data = df$`Ppt difference for areas for the rest of London`,
+                color = discreet.set[5]) %>%
+  
+  # hc_colors(comparison.pair) %>% 
+  
+  
+  hc_tooltip(headerFormat = "{series.name}:<br/>",
+             pointFormat = "<b>{point.y:.1f}ppts</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+```
+:::
+
+The most remarkable drop is in children under 16 and there are also fewer young (16-29) and older (70+) people living in the areas with the biggest income increases. On the other hand, there are more people between 30 and 69 years living in those areas. @cr-census-age
+
+::: {#cr-census-age}
+```{r census-age, include = TRUE, echo = FALSE, message = FALSE}
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Changes in the distribution of age for areas with the highest income rises and the rest of London, between 2012 and 2020"
+Title_csv <- "Highest income areas are those that were below the median income for London in 2012 and above the median in 2020."
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/2c_biggest-inc-rise-age-census.csv") 
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_yAxis(title = list(text = "Percentage point difference between 2020 and 2012")) %>%
+  
+  hc_xAxis(categories = df$Age, 
+           title = list(text = "")) %>%
+  
+  hc_add_series(type = "bar",
+                name = "Highest income rises",
+                data = df$`Ppt difference for areas with the biggest income rises`,
+                color = discreet.set[6]) %>%
+  
+  hc_add_series(type = "bar",
+                name = "Rest of Quntile 1",
+                data = df$`Ppt difference for areas for the rest of quintile 1`,
+                color = discreet.set[1]) %>%
+  
+  hc_add_series(type = "bar",
+                name = "Rest of London",
+                data = df$`Ppt difference for areas for the rest of London`,
+                color = discreet.set[5]) %>%
+  
+  # hc_colors(comparison.pair) %>% 
+  
+  
+  hc_tooltip(headerFormat = "{series.name}:<br/>",
+             pointFormat = "<b>{point.y:.1f}ppts</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+```
+:::
+
+There is a remarkable drop of black communities in those areas. @cr-census-ethnicity
+
+::: {#cr-census-ethnicity}
+```{r census-ethnicity, include = TRUE, echo = FALSE, message = FALSE}
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Changes in the distribution of ethnicity characteristics for areas with the highest income rises and the rest of London, between 2012 and 2020"
+Title_csv <- "Highest income areas are those that were below the median income for London in 2012 and above the median in 2020."
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/2b_biggest-inc-rise-ethnicity-census.csv") %>% 
+  filter(Ethnicity != "Total (%)")
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_yAxis(title = list(text = "Percentage point difference between 2020 and 2012")) %>%
+  
+  hc_xAxis(categories = df$Ethnicity, 
+           title = list(text = "")) %>%
+  
+  hc_add_series(type = "bar",
+                name = "Highest income rises",
+                data = df$`Ppt difference for areas with the biggest income rises`,
+                color = discreet.set[6]) %>%
+  
+  hc_add_series(type = "bar",
+                name = "Rest of Quntile 1",
+                data = df$`Ppt difference for areas for the rest of quintile 1`,
+                color = discreet.set[1]) %>%
+  
+  hc_add_series(type = "bar",
+                name = "Rest of London",
+                data = df$`Ppt difference for areas for the rest of London`,
+                color = discreet.set[5]) %>%
+  
+  #hc_colors(discreet.set) %>% 
+  
+  
+  hc_tooltip(headerFormat = "{series.name}:<br/>",
+             pointFormat = "<b>{point.y:.1f}ppts</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+
+
+
+
+```
+:::
+
+Fewer families with children and more couples with no children. @cr-census-hhcomp
+
+::: {#cr-census-hhcomp}
+```{r census-hhcomp, include = TRUE, echo = FALSE, message = FALSE}
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Changes in the distribution of household composition for areas with the highest income rises and the rest of London, between 2012 and 2020"
+Title_csv <- "Highest income areas are those that were below the median income for London in 2012 and above the median in 2020."
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/2e_biggest-inc-rise-hh-comp-census.csv") 
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_yAxis(title = list(text = "Percentage point difference between 2020 and 2012")) %>%
+  
+  hc_xAxis(categories = df$`Household composition`, 
+           title = list(text = "")) %>%
+  
+  hc_add_series(type = "bar",
+                name = "Highest income rises",
+                data = df$`Ppt difference for areas with the biggest income rises`,
+                color = discreet.set[6]) %>%
+  
+  hc_add_series(type = "bar",
+                name = "Rest of Quntile 1",
+                data = df$`Ppt difference for areas for the rest of quintile 1`,
+                color = discreet.set[1]) %>%
+  
+  hc_add_series(type = "bar",
+                name = "Rest of London",
+                data = df$`Ppt difference for areas for the rest of London`,
+                color = discreet.set[5]) %>%
+  
+  # hc_colors(comparison.pair) %>% 
+  
+  
+  hc_tooltip(headerFormat = "{series.name}:<br/>",
+             pointFormat = "<b>{point.y:.1f}ppts</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+```
+:::
+
+Fewer mortgage owners, huge drop in social housing tenants and more people on private rents. @cr-census-tenure
+
+::: {#cr-census-tenure}
+```{r census-tenure, include = TRUE, echo = FALSE, message = FALSE}
+
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Changes in the distribution of household tenure for areas with the highest income rises and the rest of London, between 2012 and 2020"
+Title_csv <- "Highest income areas are those that were below the median income for London in 2012 and above the median in 2020."
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/2d_biggest-inc-rise-tenure-census.csv") 
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_yAxis(title = list(text = "Percentage point difference between 2020 and 2012")) %>%
+  
+  hc_xAxis(categories = df$`Tenure type`, 
+           title = list(text = "")) %>%
+  
+  hc_add_series(type = "bar",
+                name = "Highest income rises",
+                data = df$`Ppt difference for areas with the biggest income rises`,
+                color = discreet.set[6]) %>%
+  
+  hc_add_series(type = "bar",
+                name = "Rest of Quntile 1",
+                data = df$`Ppt difference for areas for the rest of quintile 1`,
+                color = discreet.set[1]) %>%
+  
+  hc_add_series(type = "bar",
+                name = "Rest of London",
+                data = df$`Ppt difference for areas for the rest of London`,
+                color = discreet.set[5]) %>%
+  
+  # hc_colors(comparison.pair) %>% 
+  
+  
+  hc_tooltip(headerFormat = "{series.name}:<br/>",
+             pointFormat = "<b>{point.y:.1f}ppts</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+```
+:::
+
+@cr-what-means
+
+:::{#cr-what-means}
+
+## What does this mean for these areas?
+
+:::
+
+House prices in those areas are lower than the rest of London but higher than the areas in quintile 1 that did not see such big income increases. @cr-house-prices
+
+::: {#cr-house-prices}
+```{r house-prices, include = TRUE, echo = FALSE, message = FALSE}
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "House prices for areas with the highest income rises and the rest of London, between 2010 and 2023"
+Title_csv <- "Highest income areas are those that were below the median income for London in 2012 and above the median in 2020."
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/3_house-prices.csv") %>% 
+  filter(Year != 2024)
+
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  hc_plotOptions(
+    line = list(marker = list(symbol = "circle", 
+                              radius = 3))) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_yAxis(title = list(text = "")) %>%
+  
+  hc_xAxis(categories = unique(df$Year),
+           title = list(text = "")) %>%
+  
+  hc_add_series(type = "line",
+                name = "Highest income rises",
+                data = df$`Average house price (£)`[df$income_rises == "Biggest rises"],
+                color = discreet.set[6]) %>%
+  
+  hc_add_series(type = "line",
+                name = "Rest of Quntile 1",
+                data = df$`Average house price (£)`[df$income_rises == "Rest of lowest 2012 income quintiles"],
+                color = discreet.set[1]) %>%
+  
+  hc_add_series(type = "line",
+                name = "Rest of London",
+                data = df$`Average house price (£)`[df$income_rises == "Rest of London"],
+                color = discreet.set[5]) %>%
+  
+  
+  # hc_colors(comparison.pair) %>% 
+  
+  # hc_tooltip(headerFormat = "{series.name}:<br/>",
+  #            pointFormat = "<b>{point.y:.1f}ppts</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+```
+:::
+
+However, house prices in those areas increased at a much higher rate than the rest of London and the rest of the areas in quintile 1. @cr-house-prices-index
+
+::: {#cr-house-prices-index}
+```{r house-prices-index, include = TRUE, echo = FALSE, message = FALSE}
+library(tidyverse)
+library(highcharter)
+
+source("plots/LPP colours.r")
+
+
+TITLE <- "Changes in house prices for areas with the highest income rises and the rest of London, between 2010 and 2023"
+Title_csv <- "Highest income areas are those that were below the median income for London in 2012 and above the median in 2020."
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+df <- read_csv("ad-hocs/gentrification/plot-inputs/3_house-prices-inx.csv") %>% 
+  select(-`2024_inx`) %>% 
+  rename_with(cols = starts_with("20"),
+              ~ str_remove(., "_inx")) %>% 
+  pivot_longer(cols = starts_with("20"),
+               names_to = "Year",
+               values_to = "Change in average house price (%)")
+
+
+plot <- highchart() %>% 
+  
+  hc_chart(backgroundColor = "#ffffff",
+           style = list(fontFamily = "Roboto")) %>% 
+  
+  hc_plotOptions(
+    line = list(marker = list(symbol = "circle", 
+                              radius = 3))) %>% 
+  
+  hc_title(text = TITLE, 
+           align = "left", 
+           style = list(fontSize ="18px",
+                        color = green.3[[1]],
+                        fontWeight = "400")) %>% 
+  
+  hc_yAxis(title = list(text = "")) %>%
+  
+  hc_xAxis(categories = unique(df$Year),
+           title = list(text = "")) %>%
+  
+  hc_add_series(type = "line",
+                name = "Highest income rises",
+                data = df$`Change in average house price (%)`[df$income_rises == "Biggest rises"],
+                color = discreet.set[6]) %>%
+  
+  hc_add_series(type = "line",
+                name = "Rest of Quntile 1",
+                data = df$`Change in average house price (%)`[df$income_rises == "Rest of lowest 2012 income quintiles"],
+                color = discreet.set[1]) %>%
+  
+  hc_add_series(type = "line",
+                name = "Rest of London",
+                data = df$`Change in average house price (%)`[df$income_rises == "Rest of London"],
+                color = discreet.set[5]) %>%
+  
+  
+  # hc_colors(comparison.pair) %>% 
+  
+  # hc_tooltip(headerFormat = "{series.name}:<br/>",
+  #            pointFormat = "<b>{point.y:.1f}ppts</b><br/>") %>% 
+  
+  hc_exporting(enabled = TRUE) 
+
+plot
+
+
+```
+:::
+
+
+Primary school applications for 2023/24 have dropped in the whole of England, compared to 10 years ago. @cr-school-applications-eng
+
+::: {#cr-school-applications-eng}
+```{r school-applications-eng, include = TRUE, echo = FALSE, message = FALSE}
+#plot for school admissions map
+library(tidyverse)
+library(sf)
+library(highcharter)
+library(geojsonio)
+library(rmapshaper)
+
+source("plots/LPP colours.r")
+source("plots/chart_theme.r")
+
+
+TITLE <- "Change in primary school applications in England and neighbouring counties"
+Title_csv <- ""
+Note <- ""
+Data_Source <- ""
+Chart_Source <- "London's Poverty Profile 2024"
+
+#read in the data
+df <- read_csv("ad-hocs/gentrification/plot-inputs/4_school_admissions.csv") %>% rename("ONS_CODE" = new_la_code)
+
+# #LAUA ONS Generalised BGC
+# url.geo <- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Counties_and_Unitary_Authorities_December_2023_Boundaries_UK_BGC/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson"
+# 
+# #laua 2011 bounds
+# #url.geo <- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Counties_and_Unitary_Authorities_December_2011_GCB_EW_2022/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson"
+# bounds <- sf::st_read(url.geo)
+# 
+# 
+# #simplify the dataset before merging with the df
+# bounds <- bounds %>%
+#   select(CTYUA23NM, 
+#          "ONS_CODE" = CTYUA23CD, 
+#          geometry)
+# 
+# #simplify the boundaries
+# bounds <- ms_simplify(bounds, keep = 0.1)
+
+# s3write_using(bounds, FUN = saveRDS,
+# bucket = "wpi-spatial-data/LAD", # Make sure the correct bucket is being used!
+# object = paste0("LAUA23_BGC_simple",Sys.Date(),".rds")) # this is the file name
+
+bounds <- s3read_using(FUN = readRDS, 
+                       bucket = "wpi-spatial-data/LAD", 
+                       object = "LAUA23_BGC_simple2024-12-16.rds")
+
+#keep just England bounds
+bounds <- bounds %>% filter(str_detect(ONS_CODE, "E"))
+
+
+#code for the 2011 bounds because bucks has the wrong code in the DfE data, however the 2024/25 data is missing anyway
+# bounds <- bounds %>% 
+#   select(ctyua11cd, ctyua11nm, geometry)
+# 
+# 
+# #merge the data
+# df <- df %>%
+#   left_join(bounds, by = c("new_la_code" = "ctyua11cd"))
+
+df <- df %>% na.omit()
+
+#make the quintiles (ENGLAND base)
+df <- df %>% 
+  mutate(application_change_quintile = ntile(applications_received_diff_PC, 5),
+         application_change_quintile = case_when(applications_received_diff_PC >0 ~ 6,
+                                                 TRUE ~ application_change_quintile)) #%>% #sep label for any positive values (Havering and Thurock)
+  #filter(London_marker %in% c("London", "border")) 
+
+#pivot the quintiles into series
+dfx <- df %>% 
+  mutate(application_change_quintile.labs = case_when(
+    application_change_quintile == 1 ~ "1 (lowest)",
+    application_change_quintile == 2 ~ "2",
+    application_change_quintile == 3 ~ "3",
+    application_change_quintile == 4 ~ "4",
+    application_change_quintile == 5 ~ "5 (highest)",
+    application_change_quintile == 6 ~ "5 and also net positive",
+    TRUE ~ "Unknown"
+  )) 
+
+dfx$applications_received_diff_PC <- round(dfx$applications_received_diff_PC, 1)
+dfx$tooltip1 <- dfx$la_name
+dfx$tooltip2 <- dfx$applications_received_diff_PC
+
+
+#create geojson version ***make sure new variables or any changes are made before this line***
+bounds <- geojsonio::geojson_json(bounds, crs = 4326)
+
+#Use geojsonio to make data compatible with hcmap
+bounds <- jsonlite::fromJSON(bounds, simplifyVector = F)
+#colours <- c(theme.set[1], theme.set[2], grey.pair[1],theme.set[5], theme.set[4])
+colours <- c("#e53d51",
+             "#f16f75",
+             "#f9999b",
+             "#fec1c2",
+             "#fde9e9")
+
+#now join data and colorize etc.
+map <- highchart() %>%
+  hc_add_series_map(map = bounds,
+                    df = dfx, 
+                    borderColor = "black",
+                    borderWidth = 0.3,
+                    name = "Change in school applications 2014/15 to 2024/25",
+                    value = "application_change_quintile" , #this is the column in the df to be mapped
+                    joinBy = "ONS_CODE", #this is how it joins to the boundary file
+                    colorByPoint = T,
+                    color = discreet.set,
+                    showInLegend = F
+                    ) %>% 
+  
+  hc_mapNavigation(enabled = TRUE,  enableMouseWheelZoom = TRUE,
+                   enableDoubleClickZoom = TRUE ) %>%
+  # This renders a numerical legend with a pointer arrow for the value on the map
+  # for use with continuous numeric data only
+  hc_colorAxis(
+    # dataClassColor = "applications_received_diff_PC",
+    # min = -30, 
+    # max = -10,
+    # minColor = colours[5],
+    # 
+    # maxColor = colours[3]
+    #dataClasses = ntile
+    dataClassColor = "application_change_quintile",
+    dataClasses = list(
+      list(from = 1, to = 1, color = colours[1], name = "1 (largest decrease -18% to -35%)"),
+      list(from = 2, to = 2, color = colours[2], name = "2"),
+      list(from = 3, to = 3, color = colours[3], name = "3"),
+      list(from = 4, to = 4, color = colours[4], name = "4"),
+      list(from = 5, to = 5, color = colours[5], name = "5 (smallest decrease -6% to 0%)"),
+      list(from = 6, to = 6, color = green.pair[2], name = "5 (positive to +11%)")
+      
+    )) %>% 
+  hc_mapView(projection = list(name = "LambertConformalConic")) %>% 
+  hc_title(text = TITLE) %>% 
+  hc_legend(title = list(text = ""),
+            layout = "horizontal",
+            floating = T,
+            align = "left",
+            symbolRadius = 0) %>% 
+  hc_tooltip(useHTML = T,
+             headerFormat = "",
+             pointFormat = "<b>{series.name}</b><br>
+              <b>MSOA: </b>{point.tooltip1}
+              <b>Change: </b>{point.tooltip2}%<br>"
+  ) %>% 
+  hc_add_theme(lpp_theme)
+map
+
+```
+:::
+
+This is particularly stark in London. @cr-school-applications-ldn
+
+::: {#cr-school-applications-ldn}
+```{r school-applications-ldn, include = TRUE, echo = FALSE, message = FALSE}
+#plot for school admissions map
+library(tidyverse)
+library(sf)
+library(highcharter)
+library(geojsonio)
+library(rmapshaper)
+
+source("plots/LPP colours.r")
+source("plots/chart_theme.r")
+
+
+TITLE <- "Change in primary school applications in London and neighbouring counties between 2014/15 and 2024/25"
+Title_csv <- ""
+Note <- ""
+Data_Source <- "Secondary and primary school applications and offers, DfE"
+Chart_Source <- "London's Poverty Profile 2024"
+
+#read in the data
+df <- read_csv("ad-hocs/gentrification/plot-inputs/4_school_admissions.csv") %>% rename("ONS_CODE" = new_la_code)
+
+# #LAUA ONS Generalised BGC
+# url.geo <- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Counties_and_Unitary_Authorities_December_2023_Boundaries_UK_BGC/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson"
+# 
+# #laua 2011 bounds
+# #url.geo <- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Counties_and_Unitary_Authorities_December_2011_GCB_EW_2022/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson"
+# bounds <- sf::st_read(url.geo)
+# 
+# 
+# #simplify the dataset before merging with the df
+# bounds <- bounds %>%
+#   select(CTYUA23NM, 
+#          "ONS_CODE" = CTYUA23CD, 
+#          geometry)
+# 
+# #simplify the boundaries
+# bounds <- ms_simplify(bounds, keep = 0.1)
+
+# s3write_using(bounds, FUN = saveRDS,
+# bucket = "wpi-spatial-data/LAD", # Make sure the correct bucket is being used!
+# object = paste0("LAUA23_BGC_simple",Sys.Date(),".rds")) # this is the file name
+
+bounds <- s3read_using(FUN = readRDS, 
+                       bucket = "wpi-spatial-data/LAD", 
+                       object = "LAUA23_BGC_simple2024-12-16.rds")
+
+#filter to the London and surrounding UAs
+bounds <- bounds %>% filter(ONS_CODE %in% df$ONS_CODE[df$London_marker %in% c("London", "border")])
+
+
+
+#code for the 2011 bounds because bucks has the wrong code in the DfE data, however the 2024/25 data is missing anyway
+# bounds <- bounds %>% 
+#   select(ctyua11cd, ctyua11nm, geometry)
+# 
+# 
+# #merge the data
+# df <- df %>%
+#   left_join(bounds, by = c("new_la_code" = "ctyua11cd"))
+
+df <- df %>% na.omit()
+
+#make the quintiles (ENGLAND base)
+df <- df %>% 
+  mutate(application_change_quintile = ntile(applications_received_diff_PC, 5),
+         application_change_quintile = case_when(applications_received_diff_PC >0 ~ 6,
+                                                 TRUE ~ application_change_quintile)) %>% #sep label for any positive values (Havering and Thurock)
+  filter(London_marker %in% c("London", "border")) 
+
+#pivot the quintiles into series
+dfx <- df %>% 
+  mutate(application_change_quintile.labs = case_when(
+    application_change_quintile == 1 ~ "1 (lowest)",
+    application_change_quintile == 2 ~ "2",
+    application_change_quintile == 3 ~ "3",
+    application_change_quintile == 4 ~ "4",
+    application_change_quintile == 5 ~ "5 (highest)",
+    application_change_quintile == 6 ~ "5 and also net positive",
+    TRUE ~ "Unknown"
+  )) 
+
+dfx$applications_received_diff_PC <- round(dfx$applications_received_diff_PC, 1)
+dfx$tooltip1 <- dfx$la_name
+dfx$tooltip2 <- dfx$applications_received_diff_PC
+
+
+#create geojson version ***make sure new variables or any changes are made before this line***
+bounds <- geojsonio::geojson_json(bounds, crs = 4326)
+
+#Use geojsonio to make data compatible with hcmap
+bounds <- jsonlite::fromJSON(bounds, simplifyVector = F)
+#colours <- c(theme.set[1], theme.set[2], grey.pair[1],theme.set[5], theme.set[4])
+colours <- c("#e53d51",
+  "#f16f75",
+  "#f9999b",
+  "#fec1c2",
+  "#fde9e9")
+
+#now join data and colorize etc.
+map <- highchart() %>%
+  hc_add_series_map(map = bounds,
+                    df = dfx, 
+                    borderColor = "black",
+                    borderWidth = 0.3,
+                    name = "Change in school applications 2014/15 to 2024/25",
+                    value = "application_change_quintile" , #this is the column in the df to be mapped
+                    joinBy = "ONS_CODE", #this is how it joins to the boundary file
+                    colorByPoint = T,
+                    color = discreet.set,
+                    showInLegend = F) %>% 
+  
+  # This renders a numerical legend with a pointer arrow for the value on the map
+  # for use with continuous numeric data only
+  hc_colorAxis(
+    # dataClassColor = "applications_received_diff_PC",
+    # min = -30, 
+    # max = -10,
+    # minColor = colours[5],
+    # 
+    # maxColor = colours[3]
+    #dataClasses = ntile
+    dataClassColor = "application_change_quintile",
+    dataClasses = list(
+      list(from = 1, to = 1, color = colours[1], name = "1 (largest decrease -18% to -35%)"),
+      list(from = 2, to = 2, color = colours[2], name = "2"),
+      list(from = 3, to = 3, color = colours[3], name = "3"),
+      list(from = 4, to = 4, color = colours[4], name = "4"),
+      list(from = 5, to = 5, color = colours[5], name = "5 (smallest decrease -6% to 0%)"),
+      list(from = 6, to = 6, color = green.pair[2], name = "5 (positive to +11%)")
+    
+  )) %>% 
+  hc_mapView(projection = list(name = "LambertConformalConic")) %>% 
+  hc_title(text = TITLE) %>% 
+  hc_legend(title = list(text = ""),
+            layout = "horizontal",
+            floating = T,
+            align = "left",
+            symbolRadius = 0) %>% 
+  hc_tooltip(useHTML = T,
+             headerFormat = "",
+             pointFormat = "<b>{series.name}</b><br>
+              <b>MSOA: </b>{point.tooltip1}
+              <b>Change: </b>{point.tooltip2}%<br>"
+  ) %>% 
+  hc_add_theme(lpp_theme)
+map
+
+```
+:::
+
+
+:::
